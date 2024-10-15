@@ -1,24 +1,29 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import ItemGrid from '../components/ItemGrid';  // Go up one directory and into components
 import FilterBar from '../components/FilterBar';
 
-const sampleItems = [
-  { title: 'Lost Wallet', image: 'https://via.placeholder.com/150', location: 'UNSW Library', date: '2 days ago' },
-  { title: 'Found Phone', image: 'https://via.placeholder.com/150', location: 'UNSW Campus', date: '1 day ago' },
-  { title: 'Lost Laptop', image: 'https://via.placeholder.com/150', location: 'Law Building', date: '5 hours ago' }
-];
-
 function HomePage() {
-  const [filteredItems, setFilteredItems] = useState(sampleItems);
+  const [items, setItems] = useState([]);  // Set initial state to empty array
+  const [filteredItems, setFilteredItems] = useState([]);
 
+  // Fetch the lost items from the backend when the component mounts
+  useEffect(() => {
+    fetch('http://localhost:5001/api/lost-items')  // Adjust the URL to your Flask API
+      .then(response => response.json())
+      .then(data => {
+        setItems(data);  // Set the fetched items in the state
+        setFilteredItems(data);  // By default, display all items
+      })
+      .catch(error => console.error('Error fetching lost items:', error));
+  }, []);  // The empty array ensures this runs only once when the component mounts
+
+  // Function to filter items based on the search term
   const handleFilter = (searchTerm) => {
-    const filtered = sampleItems.filter(item =>
+    const filtered = items.filter(item =>
       item.title.toLowerCase().includes(searchTerm.toLowerCase())
     );
     setFilteredItems(filtered);
   };
-
-  console.log(filteredItems);  // Move the console.log outside of the return statement
 
   return (
     <div className="home-page">

@@ -20,7 +20,7 @@ function ItemGrid({ items }) {
         <ItemCard
           key={index}
           title={item.title}
-          image={item.image}
+          image={item.image ? item.image : 'https://via.placeholder.com/150'}  // Use placeholder if no image
           location={item.location}
           date={item.date}
         />
