@@ -17,12 +17,26 @@ function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Here, you'd typically make an API call to your backend to log in the user
-    // Example: POST request to "/login" endpoint on your server
+    try {
+      const response = await fetch('http://localhost:5001/api/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(formData)
+      });
 
-    console.log('Logging in user:', formData);
-    // Example:
-    // const response = await fetch('/login', { method: 'POST', body: JSON.stringify(formData) });
+      const data = await response.json();
+      if (response.ok) {
+        alert('Login successful!');
+        // Optionally save session info here
+      } else {
+        alert(data.message);  // Show error message
+      }
+    } catch (error) {
+      console.error('Error logging in user:', error);
+      alert('An error occurred. Please try again.');
+    }
   };
 
   return (

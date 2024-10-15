@@ -15,7 +15,7 @@ function App() {
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/submit-lost-item" element={<SubmitLostItem />} />  {/* Route for the form */}
-        <Route path="/register" element={<Register />} />  {/* Register route */}
+        <Route path="/registerUser" element={<Register />} />  {/* Register route */}
         <Route path="/login" element={<Login />} />  {/* Login route */}
       </Routes>
     </Router>

@@ -12,7 +12,7 @@ function NavBar() {
           <Link to="/submit-lost-item" style={{ color: 'white', textDecoration: 'none' }}>Submit Lost Item</Link>
         </li>
         <li style={{ marginRight: '20px' }}>
-          <Link to="/register" style={{ color: 'white', textDecoration: 'none' }}>Register</Link>
+          <Link to="/registerUser" style={{ color: 'white', textDecoration: 'none' }}>Register</Link>
         </li>
         <li style={{ marginRight: '20px' }}>
           <Link to="/login" style={{ color: 'white', textDecoration: 'none' }}>Login</Link>

@@ -28,7 +28,7 @@ function SubmitLostItem() {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     // Create form data to submit including the image
@@ -40,9 +40,24 @@ function SubmitLostItem() {
     submissionData.append('contactInfo', formData.contactInfo);
     submissionData.append('image', formData.image);  // Append the image file
 
-    console.log('Lost Item Submitted:', formData);
-    // Here, you can handle submitting the data (e.g., sending it to an API)
+    try {
+      const response = await fetch('http://localhost:5001/api/submit-lost-item', {
+        method: 'POST',
+        body: submissionData,  // Send the form data
+      });
+
+      const data = await response.json();
+      if (response.ok) {
+        alert('Lost item submitted successfully!');
+      } else {
+        alert(data.message);  // Show any error message from the backend
+      }
+    } catch (error) {
+      console.error('Error submitting lost item:', error);
+      alert('An error occurred. Please try again.');
+    }
   };
+
 
   return (
     <div>
