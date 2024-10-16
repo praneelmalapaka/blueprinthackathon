@@ -1,10 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
+import AuthContext from '../AuthContext'; // Adjust the path if necessary
 
 function Login() {
   const [formData, setFormData] = useState({
     email: '',
     password: ''
   });
+
+  const { login } = useContext(AuthContext);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -18,24 +21,13 @@ function Login() {
     e.preventDefault();
 
     try {
-      const response = await fetch('http://localhost:5001/api/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(formData)
-      });
-
-      const data = await response.json();
-      if (response.ok) {
-        alert('Login successful!');
-        // Optionally save session info here
-      } else {
-        alert(data.message);  // Show error message
-      }
+      await login(formData.email, formData.password);
+      alert('Login successful!');
+      // Optionally redirect the user after login, e.g., using useHistory:
+      // history.push('/'); 
     } catch (error) {
       console.error('Error logging in user:', error);
-      alert('An error occurred. Please try again.');
+      alert(error.message || 'An error occurred. Please try again.');
     }
   };
 
@@ -44,9 +36,10 @@ function Login() {
       <h2>Login</h2>
       <form onSubmit={handleSubmit}>
         <div>
-          <label>Email:</label>
+          <label htmlFor="email">Email:</label>
           <input
             type="email"
+            id="email"
             name="email"
             value={formData.email}
             onChange={handleChange}
@@ -54,9 +47,10 @@ function Login() {
           />
         </div>
         <div>
-          <label>Password:</label>
+          <label htmlFor="password">Password:</label>
           <input
             type="password"
+            id="password"
             name="password"
             value={formData.password}
             onChange={handleChange}

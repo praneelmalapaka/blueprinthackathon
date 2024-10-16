@@ -54,7 +54,8 @@ def login():
     if user and user.check_password(password):
         # Save user in session
         session['user_id'] = user.id
-        return jsonify({'message': 'Login successful!'}), 200
+        return jsonify({'message': 'Login successful!',
+                        'name': email}), 200
     else:
         return jsonify({'message': 'Invalid email or password'}), 400
 
@@ -119,3 +120,13 @@ def get_lost_items():
     ]
 
     return jsonify(lost_items_list), 200
+
+@app.route('/api/user', methods=['GET'])
+def get_user_data():
+    if 'user_id' in session:
+        user_id = session['user_id']
+        user = User.query.get(user_id)
+        print("hey")
+        if user:
+            return jsonify({'name': user.email})  # Return user's email as 'name'
+    return jsonify({'error': 'User not logged in'}), 401 
