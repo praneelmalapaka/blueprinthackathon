@@ -11,7 +11,7 @@ function ItemGrid({ items }) {
       className="item-grid"
       style={{ 
         display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))',  // Responsive grid
+        gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))',  // Adjusted for bigger cards
         gap: '20px',
         padding: '10px'
       }}
@@ -19,7 +19,7 @@ function ItemGrid({ items }) {
       {items.map((item, index) => (
         <ItemCard
           key={index}
-          title={item.title}
+          title={item.title}  // Ensure 'title' is passed
           image={item.image ? item.image : 'https://via.placeholder.com/150'}  // Use placeholder if no image
           location={item.location}
           date={item.date}
