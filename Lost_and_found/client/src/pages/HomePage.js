@@ -18,7 +18,6 @@ function HomePage() {
         return response.json();
       })
       .then(data => {
-        console.log(data);  // Log the data to inspect the structure
         setItems(data);  // Set the fetched items in the state
         setFilteredItems(data);  // By default, display all items
         setLoading(false);  // Data has been loaded
@@ -29,13 +28,27 @@ function HomePage() {
         setLoading(false);  // Loading is complete, even in case of error
       });
   }, []);  // The empty array ensures this runs only once when the component mounts
-  
 
-  // Function to filter items based on the search term
-  const handleFilter = (searchTerm) => {
-    const filtered = items.filter(item =>
-      item.name.toLowerCase().includes(searchTerm.toLowerCase())  // Use 'name' instead of 'title'
-    );
+  // Function to filter items based on search terms, selected fields, and date range
+  const handleFilter = (searchTerm, filters, dateRange) => {
+    const { byName, byLocation, byDescription } = filters;
+    const { fromDate, toDate } = dateRange;
+
+    const filtered = items.filter(item => {
+      // Check if the item matches the search term in the selected fields
+      const matchesField = (
+        (byName && item.title.toLowerCase().includes(searchTerm.toLowerCase())) ||
+        (byLocation && item.location.toLowerCase().includes(searchTerm.toLowerCase())) ||
+        (byDescription && item.description.toLowerCase().includes(searchTerm.toLowerCase()))
+      );
+
+      // Check if the item's date is within the selected range
+      const itemDate = new Date(item.date);
+      const withinDateRange = (!fromDate || itemDate >= new Date(fromDate)) && (!toDate || itemDate <= new Date(toDate));
+
+      return matchesField && withinDateRange;
+    });
+
     setFilteredItems(filtered);
   };
 

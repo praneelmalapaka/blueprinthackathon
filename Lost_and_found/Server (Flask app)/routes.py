@@ -131,6 +131,7 @@ def get_lost_items():
             'title': item.title,
             'location': item.location,
             'date': item.date_lost.strftime('%Y-%m-%d'),
+            'description': item.description,
             'image': base_url + 'static/uploads/' + os.path.basename(item.photos) if item.photos else None
         }
         for item in lost_items
