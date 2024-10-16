@@ -7,6 +7,8 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
 import os
 from datetime import datetime
+from urllib.parse import quote  # To encode filenames if needed
+
 
 # Define where to save uploaded images
 UPLOAD_FOLDER = 'static/uploads'
@@ -65,6 +67,8 @@ def logout():
     return jsonify({'message': 'Logged out successfully'}), 200
 
 # Submit Lost Item Route
+UPLOAD_FOLDER = '/Users/neildadhich/Desktop/DevSoc Hackathon/blueprinthackathon/static/uploads'
+
 @app.route('/api/submit-lost-item', methods=['POST'])
 def submit_lost_item():
     title = request.form.get('title')
@@ -82,19 +86,32 @@ def submit_lost_item():
     # Handle the uploaded image (if any)
     file = request.files.get('image')
     if file and allowed_file(file.filename):
-        filename = secure_filename(file.filename)
-        file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+        # Secure the filename (remove special characters, spaces, etc.)
+        original_filename = secure_filename(file.filename)
+    
+        # Optionally encode special characters if needed
+        cleaned_filename = quote(original_filename)  # Percent-encode special characters
+
+        # Save the file to the specific uploads folder
+        file_path = os.path.join(UPLOAD_FOLDER, cleaned_filename)
+        
+        # Ensure the directory exists
+        if not os.path.exists(UPLOAD_FOLDER):
+            os.makedirs(UPLOAD_FOLDER)
+        
+        # Save the file
         file.save(file_path)
     else:
         file_path = None
 
     # Create a new lost item record
     lost_item = LostItem(
+        title = title,
         description=description,
         location=location,
         date_lost=date_lost,  # This is now a datetime.date object
-        photos=file_path,
-        user_id=None  # Adjust this to handle the actual user_id if needed
+        photos=file_path,      # Store the sanitized and encoded filename
+        user_id=None           # Adjust this to handle the actual user_id if needed
     )
 
     db.session.add(lost_item)
@@ -104,18 +121,34 @@ def submit_lost_item():
 
 @app.route('/api/lost-items', methods=['GET'])
 def get_lost_items():
-    # Query all lost items from the database
     lost_items = LostItem.query.all()
 
-    # Format the lost items into a JSON-friendly format
+    # Base URL for constructing absolute image paths
+    base_url = request.host_url  # This gives you 'http://localhost:5001/'
+
     lost_items_list = [
         {
-            'title': item.description,
+            'title': item.title,
             'location': item.location,
-            'date': item.date_lost.strftime('%Y-%m-%d'),  # Convert date to string
-            'image': item.photos  # URL of the image
+            'date': item.date_lost.strftime('%Y-%m-%d'),
+            'image': base_url + 'static/uploads/' + os.path.basename(item.photos) if item.photos else None
         }
         for item in lost_items
     ]
 
     return jsonify(lost_items_list), 200
+
+
+from flask import send_from_directory
+
+# Correct the test route to use the absolute path
+@app.route('/test-image')
+def test_image():
+    # Use the actual absolute path to your static/uploads directory
+    uploads_dir = '/Users/neildadhich/Desktop/DevSoc Hackathon/blueprinthackathon/static/uploads'
+    
+    # Log the correct absolute path to confirm
+    print(os.path.join(uploads_dir, 'Screenshot_2024-10-10_at_12.22.59_am.png'))
+
+    # Serve the image from the correct directory
+    return send_from_directory(uploads_dir, 'Screenshot_2024-10-10_at_12.22.59_am.png')
