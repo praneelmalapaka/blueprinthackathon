@@ -9,6 +9,7 @@ function NavBar() {
     try {
       await logout();
       alert('Logged out successfully!');
+      window.location.href = '/';
       // Optionally redirect to the home page or login page after logout
     } catch (error) {
       console.error('Error logging out:', error);
@@ -25,17 +26,25 @@ function NavBar() {
         <li style={{ marginRight: '20px' }}>
           <Link to="/submit-lost-item" style={{ color: 'white', textDecoration: 'none' }}>Submit Lost Item</Link>
         </li>
-        {/* ... other list items ... */}
-        {user ? ( // Conditionally render these items if user is logged in
+        <li style={{ marginRight: '20px' }}>
+          <Link to="/submit-found-item" style={{ color: 'white', textDecoration: 'none' }}>Submit Found Item</Link> 
+        </li>
+        {user ? ( 
           <>
             <li style={{ marginRight: '20px' }}>Logged in: {user.name}</li>
+            <li style={{ marginRight: '20px' }}>
+              <Link to="/messages" style={{ color: 'white', textDecoration: 'none' }}>Messages</Link> 
+            </li>
+            <li style={{ marginRight: '20px' }}>
+              <Link to="/reminders" style={{ color: 'white', textDecoration: 'none' }}>Reminders</Link> 
+            </li>
             <li>
               <button onClick={handleLogout} style={{ color: 'white', backgroundColor: '#555' }}>
                 Logout
               </button>
             </li>
           </>
-        ) : ( // Conditionally render login/register if not logged in
+        ) : ( 
           <>
             <li style={{ marginRight: '20px' }}>
               <Link to="/registerUser" style={{ color: 'white', textDecoration: 'none' }}>Register</Link>

@@ -9,7 +9,7 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await fetch('/api/user');
+        const response = await fetch('http://localhost:5001/api/user');
         if (response.ok) {
           const data = await response.json();
           setUser(data);
@@ -35,19 +35,8 @@ export const AuthProvider = ({ children }) => {
       const data = await response.json();
 
       if (response.ok) {
-        setUser({ name: data.name });
-
-        try {
-          const userResponse = await fetch('/api/user');
-          if (userResponse.ok) {
-            const userData = await userResponse.json();
-            setUser(userData);
-          } else {
-            console.error('Failed to fetch updated user data');
-          }
-        } catch (error) {
-          console.error('Error fetching updated user data:', error);
-        }
+        // Include the ID when updating the user object in the context
+        setUser({ id: data.id, name: data.name }); 
 
         return data;
       } else {
