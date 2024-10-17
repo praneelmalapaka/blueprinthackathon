@@ -12,8 +12,8 @@ export const AuthProvider = ({ children }) => {
         const response = await fetch('/api/user');
         if (response.ok) {
           const data = await response.json();
-          setUser(data); 
-        } 
+          setUser(data);
+        }
       } catch (error) {
         console.error(error);
       }
@@ -35,15 +35,13 @@ export const AuthProvider = ({ children }) => {
       const data = await response.json();
 
       if (response.ok) {
-        // Set the user with the initial data from /api/login, including the name
-        setUser({ name: data.name }); 
+        setUser({ name: data.name });
 
-        // Then, fetch updated user data from /api/user
         try {
           const userResponse = await fetch('/api/user');
           if (userResponse.ok) {
             const userData = await userResponse.json();
-            setUser(userData); 
+            setUser(userData);
           } else {
             console.error('Failed to fetch updated user data');
           }
@@ -51,13 +49,13 @@ export const AuthProvider = ({ children }) => {
           console.error('Error fetching updated user data:', error);
         }
 
-        return data; 
+        return data;
       } else {
-        throw new Error(data.message || 'Login failed'); 
+        throw new Error(data.message || 'Login failed');
       }
     } catch (error) {
       console.error('Error logging in user:', error);
-      throw error; 
+      throw error;
     }
   };
 
@@ -65,9 +63,7 @@ export const AuthProvider = ({ children }) => {
     try {
       const response = await fetch('http://localhost:5001/api/logout', { method: 'POST' });
       if (response.ok) {
-        setUser(null); 
-      } else {
-        // Handle logout error if needed
+        setUser(null);
       }
     } catch (error) {
       console.error('Error logging out:', error);

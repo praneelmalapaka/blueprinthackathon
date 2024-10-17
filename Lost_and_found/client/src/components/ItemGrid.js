@@ -1,9 +1,9 @@
 import React from 'react';
-import ItemCard from './ItemCard';
+import { Link } from 'react-router-dom';
 
 function ItemGrid({ items }) {
   if (items.length === 0) {
-    return <p>No items found. Try searching again.</p>;  // Handle empty results
+    return <p>No items found. Try searching again.</p>;
   }
 
   return (
@@ -11,19 +11,27 @@ function ItemGrid({ items }) {
       className="item-grid"
       style={{ 
         display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))',  // Adjusted for bigger cards
+        gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))',
         gap: '20px',
         padding: '10px'
       }}
     >
-      {items.map((item, index) => (
-        <ItemCard
-          key={index}
-          title={item.title}  // Ensure 'title' is passed
-          image={item.image ? item.image : 'https://via.placeholder.com/150'}  // Use placeholder if no image
-          location={item.location}
-          date={item.date}
-        />
+      {items.map(item => (
+        <div key={item.id}>
+          {console.log(item)} 
+          <Link to={`/item/${item.id}`}>  
+            <div className="item-card">
+              <img 
+                src={item.image || 'https://via.placeholder.com/150'} 
+                alt={item.title} 
+                style={{ width: '100%', height: '150px', objectFit: 'cover' }} 
+              />
+              <h3>{item.title}</h3>
+              <p>{item.location}</p>
+              <p>{item.date}</p>
+            </div>
+          </Link>
+        </div>
       ))}
     </div>
   );

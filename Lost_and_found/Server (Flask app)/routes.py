@@ -1,13 +1,13 @@
-from app_site import app, db  # Import the app and db once
+from app_site import app, db  
 from fuzzywuzzy import fuzz
 from geopy.distance import geodesic
 from flask import render_template, request, redirect, url_for, flash, session, jsonify
-from models import User, LostItem, FoundItem  # No need to import db and User again
+from models import User, LostItem, FoundItem  
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
 import os
 from datetime import datetime
-from urllib.parse import quote  # To encode filenames if needed
+from urllib.parse import quote  
 
 
 # Define where to save uploaded images
@@ -26,7 +26,7 @@ if not os.path.exists(app.config['UPLOAD_FOLDER']):
 # User Registration Route
 @app.route('/api/registerUser', methods=['POST'])
 def register_user():
-    data = request.get_json()  # Get JSON data from frontend
+    data = request.get_json()  
     email = data.get('email')
     password = data.get('password')
 
@@ -42,12 +42,12 @@ def register_user():
     db.session.commit()
 
     return jsonify({'message': 'Account created successfully!'}), 201
-    pass
+
 
 # User Login Route
 @app.route('/api/login', methods=['POST'])
 def login():
-    data = request.get_json()  # Get JSON data from frontend
+    data = request.get_json() 
     email = data.get('email')
     password = data.get('password')
 
@@ -56,8 +56,7 @@ def login():
     if user and user.check_password(password):
         # Save user in session
         session['user_id'] = user.id
-        return jsonify({'message': 'Login successful!',
-                        'name': email}), 200
+        return jsonify({'message': 'Login successful!', 'name': email}), 200
     else:
         return jsonify({'message': 'Invalid email or password'}), 400
 
@@ -68,8 +67,6 @@ def logout():
     return jsonify({'message': 'Logged out successfully'}), 200
 
 # Submit Lost Item Route
-UPLOAD_FOLDER = '/Users/arnav/blueprinthackathon/static/uploads'
-
 @app.route('/api/submit-lost-item', methods=['POST'])
 def submit_lost_item():
     title = request.form.get('title')
@@ -107,7 +104,7 @@ def submit_lost_item():
 
     # Create a new lost item record
     lost_item = LostItem(
-        title = title,
+        title=title,
         description=description,
         location=location,
         date_lost=date_lost,  # This is now a datetime.date object
@@ -129,6 +126,7 @@ def get_lost_items():
 
     lost_items_list = [
         {
+            'id': item.id,  # Include the item ID
             'title': item.title,
             'location': item.location,
             'date': item.date_lost.strftime('%Y-%m-%d'),
@@ -142,24 +140,43 @@ def get_lost_items():
 
 @app.route('/api/user', methods=['GET'])
 def get_user_data():
-    if 'user_id' in session:
-        user_id = session['user_id']
-        user = User.query.get(user_id)
-        #print("hey")
-        if user:
-            return jsonify({'name': user.email})  # Return user's email as 'name'
-    return jsonify({'error': 'User not logged in'}), 401 
+    try:
+        if 'user_id' in session:
+            user_id = session['user_id']
+            user = User.query.get(user_id)
+            if user:
+                return jsonify({'name': user.email})  # Return user's email as 'name'
+        return jsonify({'error': 'User not logged in'}), 401 
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
-from flask import send_from_directory
 
-# Correct the test route to use the absolute path
-@app.route('/test-image')
-def test_image():
-    # Use the actual absolute path to your static/uploads directory
-    uploads_dir = '/Users/arnav/blueprinthackathon/static/uploads'
-    
-    # Log the correct absolute path to confirm
-    print(os.path.join(uploads_dir, 'Screenshot_2024-10-10_at_12.22.59_am.png'))
+@app.route('/api/lost-items/<int:itemId>', methods=['GET'])
+def get_lost_item(itemId):
+    try:
+        item = LostItem.query.get(itemId)
+        if item:
+            # Construct the image URL similar to get_lost_items
+            base_url = request.host_url
+            if item.photos:
+                image_url = base_url + 'static/uploads/' + os.path.basename(item.photos)
+                images = [image_url]
+            else:
+                images = []
 
-    # Serve the image from the correct directory
-    return send_from_directory(uploads_dir, 'Screenshot_2024-10-10_at_12.22.59_am.png')
+            item_data = {
+                'id': item.id,
+                'title': item.title,
+                'description': item.description,
+                'location': item.location,
+                'date': item.date_lost.strftime('%Y-%m-%d'),
+                'images': images
+            }
+            response = jsonify(item_data)
+            response.headers['Content-Type'] = 'application/json'
+            return response, 200
+        else:
+            return jsonify({'error': 'Item not found'}), 404
+    except Exception as e:
+        print(f"Error in get_lost_item: {e}")
+        return jsonify({'error': 'An error occurred'}), 500
