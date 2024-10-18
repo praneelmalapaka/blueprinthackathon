@@ -1,5 +1,5 @@
 #!/bin/sh
-'''exec' "/Users/neildadhich/Desktop/DevSoc Hackathon/blueprinthackathon/Lost_and_found/venv/bin/python" "$0" "$@"
+'''exec' "/Users/neildadhich/Desktop/DevSoc Hackathon/blueprinthackathon/Lost_and_found/venv/bin/python3" "$0" "$@"
 ' '''
 # -*- coding: utf-8 -*-
 import re

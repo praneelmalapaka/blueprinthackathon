@@ -6,7 +6,7 @@ from flask_cors import CORS  # For CORS support if frontend and backend are on d
 
 # Get the absolute path of the directory containing the static folder
 # Manually set the correct static folder path to the actual location
-static_folder_path = '/Users/neildadhich/Desktop/DevSoc Hackathon/blueprinthackathon/static'
+static_folder_path = '/Users/neildadhich/Desktop/DevSoc Hackathon/blueprinthackathon/Lost_and_found/static/'
 
 app = Flask(__name__, static_folder=static_folder_path, static_url_path='/static')
 #print("Static folder absolute path:", os.path.abspath(static_folder_path))
