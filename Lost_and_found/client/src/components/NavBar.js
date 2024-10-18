@@ -26,9 +26,6 @@ function NavBar() {
         <li style={{ marginRight: '20px' }}>
           <Link to="/submit-lost-item" style={{ color: 'white', textDecoration: 'none' }}>Submit Lost Item</Link>
         </li>
-        <li style={{ marginRight: '20px' }}>
-          <Link to="/submit-found-item" style={{ color: 'white', textDecoration: 'none' }}>Submit Found Item</Link> 
-        </li>
         {user ? ( 
           <>
             <li style={{ marginRight: '20px' }}>Logged in: {user.name}</li>

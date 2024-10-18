@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
+import '../css/ItemPage.css';  // Import the CSS styles
 
 function ItemPage() {
   const { itemId } = useParams();
@@ -45,14 +46,12 @@ function ItemPage() {
             key={index}
             src={image}
             alt={`${item.title} - Image ${index + 1}`}
-            style={{ maxWidth: '200px', maxHeight: '150px' }}
           />
         ))}
       </div>
       <p><b>Description:</b> {item.description}</p>
       <p><b>Location:</b> {item.location}</p>
       <p><b>Date Lost:</b> {item.date}</p>
-      {/* ... display other item details */}
     </div>
   );
 }
